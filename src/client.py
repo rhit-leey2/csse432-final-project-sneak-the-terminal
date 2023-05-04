@@ -22,16 +22,18 @@ def client_program():
 
     while message.lower().strip() != ';;;':
 
-        # if (message == "dir"):
-        #     to_send = "ls"
-        # elif message == "cd":
-        #     to_send == "pwd"
-        # elif message == "mkdir newFolder":
-        #     to_send = "mkdir myFolder"
-        # elif message == "echo some-test > fileName(.txt)":
-        #     to_send = "cat > fileName(.txt)"
-        # elif message == "ren oldFolderName= 
-
+        if (message == "dir"):
+            to_send = "ls"
+        elif message == "cd":
+            to_send == "pwd"
+        elif message == "mkdir newFolder":
+            to_send = "mkdir myFolder"
+        elif message == "echo some-test > fileName(.txt)":
+            to_send = "cat > fileName(.txt)"
+        #elif message.startswith("echo") && message.
+        
+        # handle error cases for invalid messages
+        # when invalid message -> don't send, return and prompt back
 
         client_socket.send(message.encode())  # send message, default encoding encoding="utf-8", errors="strict"
         data = client_socket.recv(1024).decode()  # receive response
