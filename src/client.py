@@ -22,15 +22,54 @@ def client_program():
 
     while message.lower().strip() != ';;;':
 
+        messageArr = []
+        messageStr = ""
+        
         if (message == "dir"):
             to_send = "ls"
         elif message == "cd":
             to_send == "pwd"
-        elif message == "mkdir newFolder":
-            to_send = "mkdir myFolder"
-        elif message == "echo some-test > fileName(.txt)":
-            to_send = "cat > fileName(.txt)"
-        #elif message.startswith("echo") && message.
+        elif message == "cd..":
+            to_send = "cd .."
+        elif message.startswith("mkdir"):
+            mkdir, folder = messageArr.split(" ")
+            to_send = "mkdir " + folder
+        elif message.startswith("echo"):
+            echo, file1, file2 = message.split(" ")
+            messageStr.append("cat ")
+            messageStr.append(file1 + " > ")
+            messageStr.append(file2)
+            to_send = messageStr
+        elif message.startswith("rmdrir"):
+            to_send = message
+        elif message.startswith("ren"):
+            ren, oldFile, newFile = message.split(" ")
+            messageStr.append("mv ")
+            messageStr.append(oldFile + " ")
+            messageStr.append(newFile)
+            to_send = messageStr
+        elif message.startswith("robocopy"):
+            robocopy, folder, filePath = message.split(" ")
+            messageStr.append("cp -r")
+            messageStr.append(folder + " ")
+            messageStr.append(filePath) 
+            to_send = messageStr
+        elif message == "move":
+            to_send == "mv"
+        elif message.startswith("move"):
+            move, folder, dir = message.split(" ")
+            messageArr.append("mv")
+            messageArr.append()
+            to_send = "mkdir "
+        elif message.startswith("cls"):
+            to_send = "clear"
+        elif message.startswith("type"):
+            type, file = message.split(" ")
+            to_send = "cat " + file
+        elif message.startswith("Type"):
+            type, path, pip, find, v, c = message.split(" ")
+        elif message.startswith("dig"):
+            to_send = message;
         
         # handle error cases for invalid messages
         # when invalid message -> don't send, return and prompt back
