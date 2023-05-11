@@ -1,5 +1,7 @@
+import os
 import socket
 import sys
+import subprocess
 import subprocess
 
 # 127.0.0.1 IP address for localhost
@@ -44,8 +46,35 @@ def server_program():
             # Print the output
             print("HERE IS THE OUTPUT:")
             #print(output.decode())
+ 
+            # Execute AppleScript to get the ID of the frontmost iTerm2 window
+            script = 'tell application "iTerm2" to id of current window'
+            result = subprocess.run(['osascript', '-e', script], capture_output=True, text=True)
+            window_id = result.stdout.strip()
 
-            conn.send(output)
+            if result.returncode == 0 and window_id:
+                # Capture the screenshot of the iTerm2 window using screencapture command
+                subprocess.run(['screencapture', '-l', window_id, 'terminal_screenshot.png'])
+                print("screenshot done")
+            else:
+                print("iTerm2 window not found.")
+
+            
+            fileName = 'terminal_screenshot.png'
+            if(os.path.exists(fileName) == False):
+                conn.send(b"File not exist")
+            else:
+                fileSize = os.path.getsize(fileName)
+                conn.send(str(fileSize).encode())
+                with open(fileName, "rb") as file:
+                    print("Start to send")
+                    #conn.send(b"File transfer started")
+                    conn.sendfile(file, 0, fileSize)
+            #conn.send(b"file transfer of" + bytes(str(fileSize), 'utf-8') + b"bytes complete and placed in current directory")
+            
+            #conn.send(output)
+            
+            
             
         conn.close()
         
