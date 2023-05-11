@@ -69,7 +69,7 @@ def client_program():
         elif message.startswith("Type"):
             type, path, pip, find, v, c = message.split(" ")
         elif message.startswith("dig"):
-            to_send = message;
+            to_send = message
         
         # handle error cases for invalid messages
         # when invalid message -> don't send, return and prompt back
