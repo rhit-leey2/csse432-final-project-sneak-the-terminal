@@ -1,5 +1,11 @@
 import socket
 import sys
+from PIL import Image
+import os
+
+ASCII_CHARS_DETAIL = "@%#*+=-:. "
+ASCII_CHARS_EXTRA_DETAIL = "@%#*+=-:.~^,`'\"<>i!lI;:,_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
+ASCII_CHARS_ULTRA_DETAIL = "@%#*+=-:.~^,`'\"<>i!lI;:,_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
 
 def client_program():
@@ -77,11 +83,76 @@ def client_program():
         client_socket.send(message.encode())  # send message, default encoding encoding="utf-8", errors="strict"
         data = client_socket.recv(1024).decode()  # receive response
 
+        #temporary name for the picture
+        filename = 'temporary'
+
+        #save the picture received from the server and get its filepath
+        picture_path = save_png_data(data, filename)
+
+        #Displaying the ASCIIart with the provided picture path
+        display_ASCIIart(picture_path)
+        
+
         print('Received from server: ' + data)  # show in terminal
 
         message = input(" -> ")  # again take input
         print(message)
     client_socket.close()  # close the connection
+
+def resize_image(image, new_width=100):
+    width, height = image.size
+    aspect_ratio = float(height) / float(width)
+    new_height = int(aspect_ratio * new_width * 0.55)
+    resized_image = image.resize((new_width, new_height))
+    return resized_image
+
+def image_to_ascii(image):
+    image = image.convert("L")  # Convert to grayscale
+    pixels = image.getdata()
+    ascii_str = ""
+    for pixel_value in pixels:
+        ascii_index = int(pixel_value / 256 * len(ASCII_CHARS_ULTRA_DETAIL))
+        ascii_str += ASCII_CHARS_ULTRA_DETAIL[ascii_index]
+    return ascii_str
+
+def save_png_data(data, filename):
+    # Get the current directory
+    current_directory = os.getcwd()
+    
+    # Build the file path in the current directory with .png extension
+    filepath = os.path.join(current_directory, filename)
+    if not filepath.lower().endswith('.png'):
+        filepath += '.png'
+    
+    # Convert the received data from string to bytes
+    png_data = data.encode()
+    
+    # Save the data to a file
+    with open(filepath, 'wb') as file:
+        file.write(png_data)
+    
+    print(f"PNG file '{filename}' saved as '{filepath}'.")
+
+    return filepath
+
+def display_ASCIIart(file_path):
+    try:
+            #opening the image
+        image = Image.open(file_path)
+    except Exception as e:
+        print(f"Unable to open image file: {e}")
+        return
+        
+    image = resize_image(image)
+    ascii_str = image_to_ascii(image)
+
+    #process of displaying ASCII art in the terminal 
+    width = image.width
+    ascii_str_len = len(ascii_str)
+    ascii_img = [ascii_str[i:i + width] for i in range(0, ascii_str_len, width)]
+    ascii_img = "\n".join(ascii_img)
+    print(ascii_img)
+
 
 
 if __name__ == '__main__':
