@@ -80,14 +80,14 @@ def client_program():
         # handle error cases for invalid messages
         # when invalid message -> don't send, return and prompt back
 
-        client_socket.send(message.encode())  # send message, default encoding encoding="utf-8", errors="strict"
+        client_socket.send(to_send.encode())  # send message, default encoding encoding="utf-8", errors="strict"
         data = client_socket.recv(1024).decode()  # receive response
 
         #temporary name for the picture
         filename = 'temporary'
 
         #save the picture received from the server and get its filepath
-        picture_path = save_png_data(data, filename)
+        picture_path = save_png_data(data, filename, client_socket)
 
         #Displaying the ASCIIart with the provided picture path
         display_ASCIIart(picture_path)
@@ -115,22 +115,28 @@ def image_to_ascii(image):
         ascii_str += ASCII_CHARS_ULTRA_DETAIL[ascii_index]
     return ascii_str
 
-def save_png_data(data, filename):
+def save_png_data(data, filename, socket):
     # Get the current directory
     current_directory = os.getcwd()
     
     # Build the file path in the current directory with .png extension
     filepath = os.path.join(current_directory, filename)
+
     if not filepath.lower().endswith('.png'):
         filepath += '.png'
     
     # Convert the received data from string to bytes
     png_data = data.encode()
-    
+    fileSize = int(data)
     # Save the data to a file
-    with open(filepath, 'wb') as file:
-        file.write(png_data)
-    
+    with open(filepath, "wb") as file:
+        bytes_received = 0
+        while bytes_received < fileSize:
+            chunk = socket.recv(1024)
+            if not chunk:
+                break
+            file.write(chunk)
+            bytes_received += len(chunk)
     print(f"PNG file '{filename}' saved as '{filepath}'.")
 
     return filepath
