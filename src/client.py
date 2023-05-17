@@ -38,7 +38,7 @@ def client_program():
         if (message == "dir"):
             to_send = "ls"
         elif message == "cd":
-            to_send == "pwd"
+            to_send == "cd"
         elif message == "cd..":
             to_send = "cd .."
         elif message.startswith("mkdir"):
