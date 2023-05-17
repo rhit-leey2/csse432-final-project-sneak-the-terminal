@@ -2,11 +2,15 @@ import socket
 import sys
 from PIL import Image
 import os
+from imgurpython import ImgurClient
 
-ASCII_CHARS_DETAIL = "@%#*+=-:. "
-ASCII_CHARS_EXTRA_DETAIL = "@%#*+=-:.~^,`'\"<>i!lI;:,_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
-ASCII_CHARS_ULTRA_DETAIL = "@%#*+=-:.~^,`'\"<>i!lI;:,_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
+# ASCII_CHARS_DETAIL = "@%#*+=-:. "
+# ASCII_CHARS_EXTRA_DETAIL = "@%#*+=-:.~^,`'\"<>i!lI;:,_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
+# ASCII_CHARS_ULTRA_DETAIL = "@%#*+=-:.~^,`'\"<>i!lI;:,_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
+client_id = 'c1ad9ed60abff73'
+
+client_secret = 'bdeeda763017ee2db235ec38cd6912193bd888ce'
 
 def client_program():
     if(len(sys.argv) != 3):
@@ -88,32 +92,48 @@ def client_program():
 
         #save the picture received from the server and get its filepath
         picture_path = save_png_data(data, filename, client_socket)
+    # Initialize the Imgur client
 
+        client = ImgurClient(client_id, client_secret)
+
+
+
+        # Upload the image
+
+        image_path = picture_path # Replace with the path to your image
+        uploaded_image = client.upload_from_path(image_path, anon=True)
+
+
+
+        # Get the uploaded image link
+        image_link = uploaded_image['link']
+
+        print("Image uploaded successfully. Link:", image_link)
         #Displaying the ASCIIart with the provided picture path
-        display_ASCIIart(picture_path)
+        # display_ASCIIart(picture_path)
         
 
-        print('Received from server: ' + data)  # show in terminal
+        # print('Received from server: ' + data)  # show in terminal
 
         message = input(" -> ")  # again take input
         print(message)
     client_socket.close()  # close the connection
 
-def resize_image(image, new_width=100):
-    width, height = image.size
-    aspect_ratio = float(height) / float(width)
-    new_height = int(aspect_ratio * new_width * 0.55)
-    resized_image = image.resize((new_width, new_height))
-    return resized_image
+# def resize_image(image, new_width=100):
+#     width, height = image.size
+#     aspect_ratio = float(height) / float(width)
+#     new_height = int(aspect_ratio * new_width * 0.55)
+#     resized_image = image.resize((new_width, new_height))
+#     return resized_image
 
-def image_to_ascii(image):
-    image = image.convert("L")  # Convert to grayscale
-    pixels = image.getdata()
-    ascii_str = ""
-    for pixel_value in pixels:
-        ascii_index = int(pixel_value / 256 * len(ASCII_CHARS_ULTRA_DETAIL))
-        ascii_str += ASCII_CHARS_ULTRA_DETAIL[ascii_index]
-    return ascii_str
+# def image_to_ascii(image):
+#     image = image.convert("L")  # Convert to grayscale
+#     pixels = image.getdata()
+#     ascii_str = ""
+#     for pixel_value in pixels:
+#         ascii_index = int(pixel_value / 256 * len(ASCII_CHARS_ULTRA_DETAIL))
+#         ascii_str += ASCII_CHARS_ULTRA_DETAIL[ascii_index]
+#     return ascii_str
 
 def save_png_data(data, filename, socket):
     # Get the current directory
@@ -141,23 +161,23 @@ def save_png_data(data, filename, socket):
 
     return filepath
 
-def display_ASCIIart(file_path):
-    try:
-            #opening the image
-        image = Image.open(file_path)
-    except Exception as e:
-        print(f"Unable to open image file: {e}")
-        return
+# def display_ASCIIart(file_path):
+#     try:
+#             #opening the image
+#         image = Image.open(file_path)
+#     except Exception as e:
+#         print(f"Unable to open image file: {e}")
+#         return
         
-    image = resize_image(image)
-    ascii_str = image_to_ascii(image)
+#     image = resize_image(image)
+#     ascii_str = image_to_ascii(image)
 
-    #process of displaying ASCII art in the terminal 
-    width = image.width
-    ascii_str_len = len(ascii_str)
-    ascii_img = [ascii_str[i:i + width] for i in range(0, ascii_str_len, width)]
-    ascii_img = "\n".join(ascii_img)
-    print(ascii_img)
+#     #process of displaying ASCII art in the terminal 
+#     width = image.width
+#     ascii_str_len = len(ascii_str)
+#     ascii_img = [ascii_str[i:i + width] for i in range(0, ascii_str_len, width)]
+#     ascii_img = "\n".join(ascii_img)
+#     print(ascii_img)
 
 
 
