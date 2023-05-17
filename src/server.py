@@ -3,6 +3,8 @@ import socket
 import sys
 import subprocess
 import subprocess
+from imgurpython import ImgurClient
+
 
 # 127.0.0.1 IP address for localhost
 # ipconfig
@@ -45,7 +47,7 @@ def server_program():
             
             # Print the output
             print("HERE IS THE OUTPUT:")
-            #print(output.decode())
+            print(output.decode())
  
             # Execute AppleScript to get the ID of the frontmost iTerm2 window
             script = 'tell application "iTerm2" to id of current window'
@@ -61,6 +63,26 @@ def server_program():
 
             
             fileName = 'terminal_screenshot.png'
+            
+            # # upload it to imgur
+            # client_id = 'c1ad9ed60abff73'
+            # client_secret = 'bdeeda763017ee2db235ec38cd6912193bd888ce'
+
+            # # Initialize the Imgur client
+            # client = ImgurClient(client_id, client_secret)
+
+            # # Upload the image
+            # image_path = fileName # Replace with the path to your image
+            # uploaded_image = client.upload_from_path(image_path, anon=True)
+            
+            # # Get the uploaded image link
+            # image_link = uploaded_image['link']
+            # print("Image uploaded successfully. Link:", image_link)
+            
+            
+            
+            
+            
             if(os.path.exists(fileName) == False):
                 conn.send(b"File not exist")
             else:
@@ -70,9 +92,11 @@ def server_program():
                     print("Start to send")
                     #conn.send(b"File transfer started")
                     conn.sendfile(file, 0, fileSize)
+            
+            
             #conn.send(b"file transfer of" + bytes(str(fileSize), 'utf-8') + b"bytes complete and placed in current directory")
             
-            #conn.send(output)
+            #conn.send(image_link.encode())
             
             
             
